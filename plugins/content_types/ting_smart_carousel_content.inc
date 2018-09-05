@@ -55,11 +55,15 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
 
     $ctitle = $carousel_entity[$item_id]->field_ting_carousel_title['und'][0]['value'];
     $cquery = $carousel_entity[$item_id]->field_ting_carousel_search['und'][0]['value'];
+    $cqlDoctor = new TingSearchCqlDoctor($cquery);
+    $query = $cqlDoctor->string_to_cql();
+
+    dpm($query);
 
     $start = 0;
     $count = 18;
 
-    $chunk = ting_search_carousel_get_entities($cquery, $start, $count, $query_only);
+    $chunk = ting_search_carousel_get_entities($query, $start, $count, $query_only);
 
     $items = array();
     foreach ($chunk['entities'] as $entity) {
