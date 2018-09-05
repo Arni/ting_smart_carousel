@@ -1,0 +1,9 @@
+name = Ting Smart Carousel
+description = Smarter carousels for landingpages
+package = Ding!
+version = "7.x-1.x-dev"
+core = 7.x
+dependencies[] = ting
+dependencies[] = search
+dependencies[] = field_collection
+dependencies[] = ting_search_carousel

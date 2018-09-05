@@ -1,0 +1,44 @@
+<?php
+
+/**
+ * @file
+ * Ting smart carousel module main file.
+ */
+
+
+ /**
+  * Implements hook_ctools_plugin_directory().
+  *
+  * It simply tells panels where to find the .inc files that define various
+  * args, contexts, content_types.
+  */
+function ting_smart_carousel_ctools_plugin_directory($module, $plugin) {
+ if ($module == 'ctools' && !empty($plugin)) {
+   return 'plugins/' . $plugin;
+ }
+}
+
+ /**
+  * Implements hook_ctools_plugin_api().
+  */
+function ting_smart_carousel_ctools_plugin_api($module, $api) {
+   if ($module == 'page_manager' && $api == 'pages_default') {
+     return array('version' => 1);
+   }
+   if ($module == "strongarm" && $api == "strongarm") {
+    return array("version" => "1");
+  }
+}
+
+/**
+ * Helper function to display administration information in panels.
+ *
+ * Can be used within a ctools plugin file for admin info.
+ */
+function ting_smart_carousel_get_default_admin_info($subtype, $conf, $context) {
+  $output = new stdClass();
+  //$output->title = t('Serendipity inspiration list (@subtype)', array('@subtype' => $subtype));
+  $output->content = t('Carousel delta: @delta', array('@delta' => $conf['deltaid'])) . '<br/>';
+
+  return $output;
+}
