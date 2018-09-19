@@ -55,6 +55,7 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
 
     $ctitle = $carousel_entity[$item_id]->field_ting_carousel_title['und'][0]['value'];
     $cquery = $carousel_entity[$item_id]->field_ting_carousel_search['und'][0]['value'];
+    dpm($cquery);
     $cqlDoctor = new TingSearchCqlDoctor($cquery);
     $query = $cqlDoctor->string_to_cql();
 
@@ -65,6 +66,7 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
 
     $items = array();
     foreach ($chunk['entities'] as $entity) {
+      //TODO - cache this $items
       $items[] = ting_object_view($entity, 'teaser');
     }
 
@@ -79,13 +81,15 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
       '#placeholders' => $chunk['next_offset'] > -1 ? TING_SEARCH_CAROUSEL_CHUNK_SIZE + 1 : 0,
     );
   }
-  $block->title = $ctitle;
-  $block->content = array(
-    '#type' => 'ding_tabbed_carousel',
-    '#title' => $ctitle,
-    '#tabs' => $carousels,
-  );
-
+  if (!empty($cquery)) {
+    $block->title = $ctitle;
+    $block->content = array(
+      '#type' => 'ding_tabbed_carousel',
+      '#title' => $ctitle,
+      '#tabs' => $carousels,
+    );
+  }
+  
   return $block;
 
 }
