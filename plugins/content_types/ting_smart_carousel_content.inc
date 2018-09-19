@@ -55,7 +55,7 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
 
     $ctitle = $carousel_entity[$item_id]->field_ting_carousel_title['und'][0]['value'];
     $cquery = $carousel_entity[$item_id]->field_ting_carousel_search['und'][0]['value'];
-    dpm($cquery);
+    
     $cqlDoctor = new TingSearchCqlDoctor($cquery);
     $query = $cqlDoctor->string_to_cql();
 
@@ -89,7 +89,7 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
       '#tabs' => $carousels,
     );
   }
-  
+
   return $block;
 
 }
