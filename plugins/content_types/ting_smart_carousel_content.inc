@@ -55,21 +55,30 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
 
     $ctitle = $carousel_entity[$item_id]->field_ting_carousel_title['und'][0]['value'];
     $cquery = $carousel_entity[$item_id]->field_ting_carousel_search['und'][0]['value'];
-    
+
     $cqlDoctor = new TingSearchCqlDoctor($cquery);
     $query = $cqlDoctor->string_to_cql();
-
+    $cid = md5($query);
     $start = 0;
     $count = 18;
+    //TODO - cache this $chunk
+    if ($cache = cache_get($cid, 'cache_ting_smart_carousel')) {
+      $chunk = $cache->data;
+      drupal_set_message('cache loaded');
+    } else {
+      $chunk = ting_search_carousel_get_entities($query, $start, $count, $query_only);
+      if ($ttl = variable_get('opensearch_cache_lifetime', OPENSEARCH_DEFAULT_CACHE_LIFETIME)) {
+        cache_set($cid, $chunk, 'cache_ting_smart_carousel', REQUEST_TIME + $ttl);
+        //dpm($cid);
+        drupal_set_message('cache_set');
+      }
+    }
 
-    $chunk = ting_search_carousel_get_entities($query, $start, $count, $query_only);
 
     $items = array();
     foreach ($chunk['entities'] as $entity) {
-      //TODO - cache this $items
       $items[] = ting_object_view($entity, 'teaser');
     }
-
     $carousels[] = array(
       '#type' => 'ding_carousel',
       '#title' => $ctitle,
