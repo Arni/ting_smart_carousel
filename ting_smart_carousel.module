@@ -42,3 +42,33 @@ function ting_smart_carousel_get_default_admin_info($subtype, $conf, $context) {
 
   return $output;
 }
+
+/**
+ * Implements hook_form_alter().
+ */
+
+function ting_smart_carousel_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'inspiration_carousel_node_form') {
+    if (!empty($fcsearch = $form_state['field']['field_ting_carousel']['und']['entity'])) {
+      foreach($fcsearch as $fsearch) {
+        $search_string = $fsearch->field_ting_carousel_search['und'][0][value];
+      }
+    }
+    $form['#submit'][] = 'ting_smart_carousel_form_submit';
+  }
+}
+
+function ting_smart_carousel_form_submit(&$form, &$form_state) {
+  if (!empty($fcsearch = $form_state['field']['field_ting_carousel']['und']['entity'])) {
+    foreach($fcsearch as $fsearch) {
+      $search_string = $fsearch->field_ting_carousel_search['und'][0][value];
+      if (!empty($search_string)) {
+        $cqlDoctor = new TingSearchCqlDoctor($search_string);
+        $query = $cqlDoctor->string_to_cql();
+        $cid = md5($query);
+        cache_clear_all($cid, 'cache_ting_smart_carousel', TRUE);
+        drupal_set_message('Cache for '.$search_string.' cleared.');
+      }
+    }
+  }
+}

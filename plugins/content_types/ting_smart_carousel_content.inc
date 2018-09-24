@@ -61,14 +61,11 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
     $cid = md5($query);
     $start = 0;
     $count = 18;
-    //TODO - cache this $chunk
     if ($cache = cache_get($cid, 'cache_ting_smart_carousel')) {
       $chunk = $cache->data;
     } else {
       $chunk = ting_search_carousel_get_entities($query, $start, $count, $query_only);
-      if ($ttl = variable_get('opensearch_cache_lifetime', OPENSEARCH_DEFAULT_CACHE_LIFETIME)) {
-        cache_set($cid, $chunk, 'cache_ting_smart_carousel', REQUEST_TIME + $ttl);
-      }
+        cache_set($cid, $chunk, 'cache_ting_smart_carousel', REQUEST_TIME + 86400);
     }
 
 
