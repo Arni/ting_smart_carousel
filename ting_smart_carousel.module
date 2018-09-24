@@ -66,7 +66,7 @@ function ting_smart_carousel_form_submit(&$form, &$form_state) {
         $cqlDoctor = new TingSearchCqlDoctor($search_string);
         $query = $cqlDoctor->string_to_cql();
         $cid = md5($query);
-        cache_clear_all($cid, 'cache_ting_smart_carousel', TRUE);
+        cache_clear_all($cid, 'cache_ting_smart_carousel');
         drupal_set_message('Cache for '.$search_string.' cleared.');
       }
     }
