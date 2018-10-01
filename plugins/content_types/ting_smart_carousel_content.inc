@@ -49,7 +49,10 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
   $delta_id = (int)$conf['deltaid'];
 
   // load the field_collection and pick the delta value from $conf
-  $item_id = $context[0]->data->field_ting_carousel['und'][$delta_id]['value'];
+  if (isset($context[0]->data->field_ting_carousel['und'][$delta_id])) {
+    $item_id = $context[0]->data->field_ting_carousel['und'][$delta_id]['value'];
+  }
+
   if (!empty($item_id)) {
     $carousel_entity = entity_load('field_collection_item', array($item_id));
 
