@@ -42,8 +42,8 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
   $carousels = array();
   $path = drupal_get_path('module', 'ting_smart_carousel');
   drupal_add_css($path . '/css/smart_carousel_content.css');
-
-  $carousel_path = $context->data;
+  $index = '';
+  //$carousel_path = $context->data;
 
   $block = new stdClass();
   $delta_id = (int)$conf['deltaid'];
