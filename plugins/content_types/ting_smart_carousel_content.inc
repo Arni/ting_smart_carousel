@@ -64,11 +64,17 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
     $cid = md5($query);
     $start = 0;
     $count = 18;
+    $path = request_path();
     if ($cache = cache_get($cid, 'cache_ting_smart_carousel')) {
       $chunk = $cache->data;
+      $log_entry = date("d-m-Y H:i") . ',Cache HIT,' . $path . ',' . $query . "\r\n";
+      file_put_contents('/var/www/work/log/inspirationlog.txt', $log_entry, FILE_APPEND);
     } else {
-      $chunk = ting_search_carousel_get_entities($query, $start, $count, $query_only);
-        cache_set($cid, $chunk, 'cache_ting_smart_carousel', REQUEST_TIME + 86400);
+      $chunk = ting_search_carousel_get_entities($query, $start, $count);
+      cache_set($cid, $chunk, 'cache_ting_smart_carousel', REQUEST_TIME + 86400);
+      $log_entry = date("d-m-Y H:i") . ',Cache MISS,' . $path . ',' . $query . "\r\n";
+      file_put_contents('/var/www/work/log/inspirationlog.txt', $log_entry, FILE_APPEND);
+
     }
 
 
