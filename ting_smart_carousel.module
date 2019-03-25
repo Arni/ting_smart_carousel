@@ -4,7 +4,22 @@
  * @file
  * Ting smart carousel module main file.
  */
+use OpenSearch\OpenSearchTingObjectCollection;
 
+
+function ting_smart_carousel_theme($existing, $type, $theme, $path) {
+  return array(
+      'ting_smart_carousel_item' => array(
+          'variables' => array(
+              'title' => NULL,
+              'creators' => NULL,
+              'cover' => NULL,
+          ),
+          'template' => 'ting-smart-carousel-item',
+          'path' => $path . '/templates',
+      ),
+  );
+}
 
  /**
   * Implements hook_ctools_plugin_directory().
@@ -71,4 +86,150 @@ function ting_smart_carousel_form_submit(&$form, &$form_state) {
       }
     }
   }
+}
+
+/**
+ * Find ting entities with covers from a query.
+ *
+ * @param string $query
+ *   Query to use.
+ * @param int $start
+ *   Offset to start from.
+ * @param int $size
+ *   Search chunk size to use.
+ * @param array $ignore
+ *   Material ids to skip.
+ *
+ * @return array
+ *   Array of found ting entities (an array), next start to use, and whether
+ *   the result end was reached.
+ */
+function ting_smart_carousel_find_entities_with_covers($query, $start, $size, array $ignore) {
+  $entities_found_with_covers = array();
+  $finished = FALSE;
+  $entities = array();
+
+  // Search offset must be divisible by chunk size.
+  // We cannot map a situation where offset is not divisible by chunk size to
+  // the search abstraction layer paging model.
+  if (!$start % $size === 0) {
+    throw new InvalidArgumentException('Offset to start from % search chunk size should not have remainders left.');
+  }
+
+  // Determine what page we are on based on the start position and size.
+  // Start is 0 indexed while page number is 1 indexed.
+  $page = floor($start / $size) + 1;
+
+  $sal_query = ting_start_query()
+    ->withRawQuery($query)
+    ->withPage($page)
+    ->withCount($size)
+    ->withPopulateCollections(FALSE)
+    ->withMaterialFilter($ignore, FALSE);
+
+  $results = $sal_query->execute();
+
+  if (!$results->hasMoreResults()) {
+    $finished = TRUE;
+  }
+
+
+foreach ($results->openSearchResult->collections as $collection) {
+    $opensearch_collection = new OpenSearchTingObjectCollection($collection);
+    $object = $opensearch_collection->getPrimaryObject();
+    $entities[$object->getId()] = $object; 
+}
+
+  // See what materials have covers.
+  $covers = ting_smart_carousel_covers_get(array_keys($entities));
+
+  // Loop over the fetched covers and build items.
+  foreach ($covers as $id => $path) {
+    $entities_found_with_covers[$id] = $entities[$id];
+  }
+file_put_contents("/var/www/drupalvm/drupal/debug/car4.txt", print_r($entities_found_with_covers, TRUE), FILE_APPEND);
+  return ting_smart_carousel_proces_results ($entities_found_with_covers); // array($entities_found_with_covers, $start, $finished);
+}
+
+function ting_smart_carousel_proces_results(array $objects) {
+  $items = array();
+  foreach ($objects as $object) {
+  $cover = ting_smart_carousel_get_cover($object);
+  $items[] = theme ('ting_smart_carousel_item', array('title' => $object->getTitle(), 'creators' => 'creator', 'cover' => $cover,));
+  }
+  return $items;
+}
+
+function ting_smart_carousel_get_cover($object) {
+  $genericObject = new stdClass();
+  $genericObject->id = $object->getId();
+  $genericObject->title = $object->getShortTitle();
+  $genericObject->creators = $object->getCreators;
+  $image = theme('ting_object_cover', array('elements' => array('#object' => $genericObject, '#image_style' => 'ding_list_medium')));
+  $options = array(
+      'html' => TRUE,
+      'attributes' => array('title' => $object->getShortTitle()),
+  );
+  //$image = '<div class="ting-cover">' . $image . '</div>';
+  return l($image, ting_smart_carousel_uri($object), $options);
+}
+
+function ting_smart_carousel_uri($object) {
+  return 'ting/collection/' . $object->id;
+}
+
+
+/**
+ * Get covers for an array of ids.
+ *
+ * @param array $requested_covers
+ *   Ids of entities to return covers for.
+ *
+ * @return array
+ *   Array of id => file path for found covers.
+ */
+function ting_smart_carousel_covers_get(array $requested_covers) {
+  $entities = array();
+  $covers = array();
+
+  // Create array of loaded entities for passing to hooks.
+  foreach ($requested_covers as $id) {
+    // Ensure that the id at least seems valid.
+    if (!mb_check_encoding($id, "UTF-8")) {
+      continue;
+    }
+
+    // Determine if the local id is a known negative.
+    if (cache_get('ting_covers:' . $id, FALSE)) {
+      continue;
+    }
+
+    // If we we already have a valid cover image, use it.
+    $path = ting_covers_object_path($id);
+    if (file_exists($path)) {
+      $covers[$id] = $path;
+      continue;
+    }
+
+    // Queue for fetching by hook.
+    $entities[$id] = ding_entity_load($id);
+  }
+
+  // Fetch covers by calling hook.
+  foreach (module_implements('ting_covers') as $module) {
+    foreach (module_invoke($module, 'ting_covers', $entities) as $id => $uri) {
+      if ($uri && $path = _ting_covers_get_file($id, $uri)) {
+        $covers[$id] = $path;
+      }
+      // Remove elements where a cover has been found, or suppressed.
+      unset($entities[$id]);
+    }
+  }
+
+  // Mark all remaining as not found in cache.
+  foreach ($entities as $id => $entity) {
+    cache_set('ting_covers:' . $id, 1, 'cache', $_SERVER['REQUEST_TIME'] + TING_COVERS_DEFAULT_CACHE_LIFETIME);
+  }
+
+  return $covers;
 }

@@ -65,23 +65,27 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
     $start = 0;
     $count = 18;
     $path = request_path();
-    if ($cache = cache_get($cid, 'cache_ting_smart_carousel')) {
-      $chunk = $cache->data;
-      $log_entry = date("d-m-Y H:i") . ',Cache HIT,' . $path . ',' . $query . "\r\n";
-      file_put_contents('/var/www/work/log/inspirationlog.txt', $log_entry, FILE_APPEND);
-    } else {
-      $chunk = ting_search_carousel_get_entities($query, $start, $count);
-      cache_set($cid, $chunk, 'cache_ting_smart_carousel', REQUEST_TIME + 86400);
-      $log_entry = date("d-m-Y H:i") . ',Cache MISS,' . $path . ',' . $query . "\r\n";
-      file_put_contents('/var/www/work/log/inspirationlog.txt', $log_entry, FILE_APPEND);
+//    if (false && $cache = cache_get($cid, 'cache_ting_smart_carousel')) {
+//      $chunk = $cache->data;
+//      $log_entry = date("d-m-Y H:i") . ',Cache HIT,' . $path . ',' . $query . "\r\n";
+//      file_put_contents('/var/www/work/log/inspirationlog.txt', $log_entry, FILE_APPEND);
+//    } else {
+//      $chunk = ting_smart_carousel_find_entities_with_covers($query, $start, $count, array ()); //ting_search_carousel_get_entities($query, $start, $count);
+//      file_put_contents("/var/www/drupalvm/drupal/debug/car4.txt", print_r($chunk, TRUE), FILE_APPEND);
+//      cache_set($cid, $chunk, 'cache_ting_smart_carousel', REQUEST_TIME + 86400);
+//      $log_entry = date("d-m-Y H:i") . ',Cache MISS,' . $path . ',' . $query . "\r\n";
+//      file_put_contents('/var/www/work/log/inspirationlog.txt', $log_entry, FILE_APPEND);
+//
+//    }
 
-    }
+      $items = ting_smart_carousel_find_entities_with_covers($query, $start, $count, array ()); //ting_search_carousel_get_entities($query, $start, $count);
+      file_put_contents("/var/www/drupalvm/drupal/debug/car5.txt", print_r($items , TRUE), FILE_APPEND);
 
-
-    $items = array();
-    foreach ($chunk['entities'] as $entity) {
-      $items[] = ting_object_view($entity, 'teaser');
-    }
+//    $items = array();
+//    foreach ($chunk['entities'] as $entity) {
+//      $items[] =  ting_object_view($entity, 'teaser');
+//    }
+    file_put_contents("/var/www/drupalvm/drupal/debug/car1.txt", print_r($items, TRUE), FILE_APPEND);
     $carousels[] = array(
       '#type' => 'ding_carousel',
       '#title' => $ctitle,
