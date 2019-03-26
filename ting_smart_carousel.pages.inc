@@ -16,6 +16,8 @@
 function ting_smart_carousel_result($query, $offset) {
   $start = 0;
   $count = 18;
+  $query = urldecode($query);
+  file_put_contents("/var/www/drupalvm/drupal/debug/car7.txt", print_r($query , TRUE), FILE_APPEND);
   $build =  ting_smart_carousel_find_entities_with_covers($query, $start, $count, array ()); 
 //  $chunk = _ting_search_carousel_get_frontpage_entities(0, 0, TING_SEARCH_CAROUSEL_CHUNK_SIZE);
 //  foreach ($chunk['entities'] as $entity) {

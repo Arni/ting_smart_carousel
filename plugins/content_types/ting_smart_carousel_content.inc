@@ -83,7 +83,7 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
     $carousels[] = array(
       '#type' => 'ding_carousel',
       '#title' => $ctitle,
-      '#path' => 'ting_smart_carousel/results/ajax/' . $query,
+      '#path' => 'ting_smart_carousel/results/ajax/' . urlencode($query),
       '#items' => $items,
       '#offset' => 2, //$chunk['next_offset'],
       // Add a single placeholder to fetch more content later if there is more
