@@ -78,14 +78,8 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
 //
 //    }
 
-      $items = ting_smart_carousel_find_entities_with_covers($query, $start, $count, array ()); //ting_search_carousel_get_entities($query, $start, $count);
-      file_put_contents("/var/www/drupalvm/drupal/debug/car5.txt", print_r($items , TRUE), FILE_APPEND);
+    $items = ting_smart_carousel_find_entities_with_covers($query, $start, $count, array ()); //ting_search_carousel_get_entities($query, $start, $count);
 
-//    $items = array();
-//    foreach ($chunk['entities'] as $entity) {
-//      $items[] =  ting_object_view($entity, 'teaser');
-//    }
-    file_put_contents("/var/www/drupalvm/drupal/debug/car1.txt", print_r($items, TRUE), FILE_APPEND);
     $carousels[] = array(
       '#type' => 'ding_carousel',
       '#title' => $ctitle,

@@ -127,6 +127,7 @@ function ting_smart_carousel_find_entities_with_covers($query, $start, $size, ar
     ->withPopulateCollections(FALSE)
     ->withMaterialFilter($ignore, FALSE);
 
+  $sal_query->reply_only = true;
   $results = $sal_query->execute();
 
   if (!$results->hasMoreResults()) {
@@ -147,7 +148,7 @@ foreach ($results->openSearchResult->collections as $collection) {
   foreach ($covers as $id => $path) {
     $entities_found_with_covers[$id] = $entities[$id];
   }
-file_put_contents("/var/www/drupalvm/drupal/debug/car4.txt", print_r($entities_found_with_covers, TRUE), FILE_APPEND);
+  //file_put_contents("/var/www/drupalvm/drupal/debug/car4.txt", print_r($entities_found_with_covers, TRUE), FILE_APPEND);
   return ting_smart_carousel_proces_results ($entities_found_with_covers); // array($entities_found_with_covers, $start, $finished);
 }
 
@@ -155,7 +156,8 @@ function ting_smart_carousel_proces_results(array $objects) {
   $items = array();
   foreach ($objects as $object) {
   $cover = ting_smart_carousel_get_cover($object);
-  $items[] = theme ('ting_smart_carousel_item', array('title' => $object->getTitle(), 'creators' => 'creator', 'cover' => $cover,));
+  $creators = ting_smart_carousel_get_creators($object);
+  $items[] = theme ('ting_smart_carousel_item', array('title' => $object->getTitle(), 'creators' => $creators, 'cover' => $cover,));
   }
   return $items;
 }
@@ -172,6 +174,24 @@ function ting_smart_carousel_get_cover($object) {
   );
   //$image = '<div class="ting-cover">' . $image . '</div>';
   return l($image, ting_smart_carousel_uri($object), $options);
+}
+function ting_smart_carousel_get_creators($object) {
+  if (count($object->getCreators())) {
+    if ($object->getYear() != '') {
+      $markup_string = t('By !author_link (@year)', array(
+          '!author_link' => implode(', ', $object->getCreators()),
+          // So wrong, but appears to be the way the data is.
+          '@year' => $object->getYear(),
+      ));
+    } else {
+      $markup_string = t('By !author_link', array(
+          '!author_link' => implode(', ', $object->getCreators()),
+      ));
+    }
+  } elseif ($object->getYear() != '') {
+    $markup_string = t('(@year)', array('@year' => $object->getYear()));
+  }
+  return $markup_string;
 }
 
 function ting_smart_carousel_uri($object) {
@@ -212,7 +232,7 @@ function ting_smart_carousel_covers_get(array $requested_covers) {
     }
 
     // Queue for fetching by hook.
-    $entities[$id] = ding_entity_load($id);
+    $entities[$id] = ''; //ding_entity_load($id);
   }
 
   // Fetch covers by calling hook.
