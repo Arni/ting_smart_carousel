@@ -61,7 +61,7 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
 
     $cqlDoctor = new TingSearchCqlDoctor($cquery);
     $query = $cqlDoctor->string_to_cql();
-    $cid = md5($query);
+    $cid = md5('new' . $query);
     $start = 0;
     $count = 18;
     $path = request_path();

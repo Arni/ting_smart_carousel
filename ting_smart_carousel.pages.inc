@@ -17,7 +17,7 @@ function ting_smart_carousel_result($query, $offset) {
   $start = 0;
   $count = 18;
   $query = urldecode($query);
-  $cid = md5($query);
+  $cid = md5('new' . $query);
   $build =  ting_smart_carousel_find_entities_with_covers($query, $start, $count, array ()); 
   
   cache_set($cid, $build , 'cache_ting_smart_carousel', REQUEST_TIME + 1800); //86400
