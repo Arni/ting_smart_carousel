@@ -78,17 +78,17 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
 //
 //    }
 
-    $items = ting_smart_carousel_find_entities_with_covers($query, $start, $count, array ()); //ting_search_carousel_get_entities($query, $start, $count);
-
+    //$items = ting_smart_carousel_find_entities_with_covers($query, $start, $count, array ()); //ting_search_carousel_get_entities($query, $start, $count);
+    $items = array();
     $carousels[] = array(
       '#type' => 'ding_carousel',
       '#title' => $ctitle,
-      '#path' => 'ting_search_carousel/results/ajax/' . $index,
+      '#path' => 'ting_smart_carousel/results/ajax/' . $query,
       '#items' => $items,
-      '#offset' => $chunk['next_offset'],
+      '#offset' => 2, //$chunk['next_offset'],
       // Add a single placeholder to fetch more content later if there is more
       // content.
-      '#placeholders' => $chunk['next_offset'] > -1 ? TING_SEARCH_CAROUSEL_CHUNK_SIZE + 1 : 0,
+      '#placeholders' => 1, //$chunk['next_offset'] > -1 ? TING_SEARCH_CAROUSEL_CHUNK_SIZE + 1 : 0,
     );
   }
   if (!empty($cquery)) {
