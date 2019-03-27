@@ -20,7 +20,7 @@ function ting_smart_carousel_result($query, $offset) {
   $cid = md5('new' . $query);
   $build =  ting_smart_carousel_find_entities_with_covers($query, $start, $count, array ()); 
   
-  cache_set($cid, $build , 'cache_ting_smart_carousel', REQUEST_TIME + 1800); //86400
+  cache_set($cid, $build , 'cache_ting_smart_carousel', REQUEST_TIME + 604800); //86400
   
   $output = '';
   foreach ($build as $item) {
@@ -30,6 +30,6 @@ function ting_smart_carousel_result($query, $offset) {
   // Return JSON output.
   drupal_json_output(array(
     'content' => $output,
-    'offset' => 8//,$chunk['next_offset'],
+    'offset' => 8,
   ));
 }

@@ -162,8 +162,8 @@ foreach ($results->openSearchResult->collections as $collection) {
   foreach ($covers as $id => $path) {
     $entities_found_with_covers[$id] = $entities[$id];
   }
-  //file_put_contents("/var/www/drupalvm/drupal/debug/car4.txt", print_r($entities_found_with_covers, TRUE), FILE_APPEND);
-  return ting_smart_carousel_proces_results ($entities_found_with_covers); // array($entities_found_with_covers, $start, $finished);
+
+  return ting_smart_carousel_proces_results ($entities_found_with_covers); 
 }
 
 function ting_smart_carousel_proces_results(array $objects) {

@@ -69,27 +69,24 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
       $items = $cache->data;
       $offset = -1;
       $log_entry = date("d-m-Y H:i") . ',Cache HIT,' . $path . ',' . $query . "\r\n";
-      //file_put_contents('/var/www/work/log/inspirationlog.txt', $log_entry, FILE_APPEND);
-      file_put_contents("/var/www/drupalvm/drupal/debug/car9.txt", print_r( 'Cache ramt ' , TRUE), FILE_APPEND);
+      file_put_contents('/var/www/work/log/inspirationlog.txt', $log_entry, FILE_APPEND);
     } else {
       $items = array();
       $offset = 0;
       $log_entry = date("d-m-Y H:i") . ',Cache MISS,' . $path . ',' . $query . "\r\n";
       file_put_contents('/var/www/work/log/inspirationlog.txt', $log_entry, FILE_APPEND);
-      //file_put_contents("/var/www/drupalvm/drupal/debug/car9.txt", print_r( 'Not hit ' , TRUE), FILE_APPEND);
     }
 
-    //$items = ting_smart_carousel_find_entities_with_covers($query, $start, $count, array ()); //ting_search_carousel_get_entities($query, $start, $count);
 
     $carousels[] = array(
       '#type' => 'ding_carousel',
       '#title' => $ctitle,
       '#path' => 'ting_smart_carousel/results/ajax/' . urlencode($query),
       '#items' => $items,
-      '#offset' => $offset, //$chunk['next_offset'],
+      '#offset' => $offset, 
       // Add a single placeholder to fetch more content later if there is more
       // content.
-      '#placeholders' => 1, //$chunk['next_offset'] > -1 ? TING_SEARCH_CAROUSEL_CHUNK_SIZE + 1 : 0,
+      '#placeholders' => 1, 
     );
   }
   if (!empty($cquery)) {
