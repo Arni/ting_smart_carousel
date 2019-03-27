@@ -20,8 +20,10 @@ function ting_smart_carousel_result($query, $offset) {
   $cid = md5('new' . $query);
   $build =  ting_smart_carousel_find_entities_with_covers($query, $start, $count, array ()); 
   
-  cache_set($cid, $build , 'cache_ting_smart_carousel', REQUEST_TIME + 604800); //86400
-  
+  if (isset($build)) {
+    cache_set($cid, $build, 'cache_ting_smart_carousel', REQUEST_TIME + 604800); //86400
+  }
+
   $output = '';
   foreach ($build as $item) {
      $output .= '<li class="ding-carousel-item">' . $item . ' </li>';

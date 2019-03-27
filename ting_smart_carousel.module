@@ -135,11 +135,11 @@ function ting_smart_carousel_find_entities_with_covers($query, $start, $size, ar
   $page = floor($start / $size) + 1;
 
   $sal_query = ting_start_query()
-    ->withRawQuery($query)
-    ->withPage($page)
-    ->withCount($size)
-    ->withPopulateCollections(FALSE)
-    ->withMaterialFilter($ignore, FALSE);
+          ->withRawQuery($query)
+          ->withPage($page)
+          ->withCount($size)
+          ->withPopulateCollections(FALSE)
+          ->withMaterialFilter($ignore, FALSE);
 
   $sal_query->reply_only = true;
   $results = $sal_query->execute();
@@ -149,11 +149,11 @@ function ting_smart_carousel_find_entities_with_covers($query, $start, $size, ar
   }
 
 
-foreach ($results->openSearchResult->collections as $collection) {
+  foreach ($results->openSearchResult->collections as $collection) {
     $opensearch_collection = new OpenSearchTingObjectCollection($collection);
     $object = $opensearch_collection->getPrimaryObject();
-    $entities[$object->getId()] = $object; 
-}
+    $entities[$object->getId()] = $object;
+  }
 
   // See what materials have covers.
   $covers = ting_smart_carousel_covers_get(array_keys($entities));
@@ -162,8 +162,34 @@ foreach ($results->openSearchResult->collections as $collection) {
   foreach ($covers as $id => $path) {
     $entities_found_with_covers[$id] = $entities[$id];
   }
+  $entities_found_with_covers = ting_smart_carousel_sort($entities_found_with_covers, $query); 
 
-  return ting_smart_carousel_proces_results ($entities_found_with_covers); 
+  return ting_smart_carousel_proces_results($entities_found_with_covers);
+}
+
+function ting_smart_carousel_sort($objects, $query) {
+  $results = array();
+  $rest = array();
+  if (strpos($query, '(') === 0) {
+    $query_parts = explode(')', $query);
+    $query = trim($query_parts[0], '(');
+  }
+
+  $faustnumbers = explode('or', $query);
+
+  //file_put_contents("/var/www/drupalvm/drupal/debug/car15.txt", print_r($faustnumbers, TRUE), FILE_APPEND);
+  if (count($faustnumbers) > 6) {
+    foreach ($faustnumbers as $faust) {
+      $faust = '870970-basis:' . trim($faust);
+      if (array_key_exists($faust, $objects)) {
+         $results[] = $objects[$faust];
+         unset($objects[$faust]);
+      } 
+    }
+    return array_merge ($results, $objects) ;
+  } else {
+    return $objects;
+  }
 }
 
 function ting_smart_carousel_proces_results(array $objects) {
