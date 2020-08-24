@@ -205,31 +205,31 @@ function ting_smart_carousel_proces_results(array $objects) {
 function ting_smart_carousel_get_cover($object) {
   $genericObject = new stdClass();
   $genericObject->id = $object->getId();
-  $genericObject->title = $object->getShortTitle();
+  $genericObject->title = $object->getTitle();
   $genericObject->creators = $object->getCreators;
-  $image = theme('ting_object_cover', array('elements' => array('#object' => $genericObject, '#image_style' => 'ding_list_medium')));
+  $image = theme('ting_object_cover', array('elements' => array('#object' => $object, '#image_style' => 'ding_list_medium')));
   $options = array(
       'html' => TRUE,
-      'attributes' => array('title' => $object->getShortTitle()),
+      'attributes' => array('title' => $object->getTitle()),
   );
   //$image = '<div class="ting-cover">' . $image . '</div>';
   return l($image, ting_smart_carousel_uri($object), $options);
 }
 function ting_smart_carousel_get_creators($object) {
   if (count($object->getCreators())) {
-    if ($object->getYear() != '') {
+    if ($object->getDate()!= '') {
       $markup_string = t('By !author_link (@year)', array(
           '!author_link' => implode(', ', $object->getCreators()),
           // So wrong, but appears to be the way the data is.
-          '@year' => $object->getYear(),
+          '@year' => $object->getDate(),
       ));
     } else {
       $markup_string = t('By !author_link', array(
           '!author_link' => implode(', ', $object->getCreators()),
       ));
     }
-  } elseif ($object->getYear() != '') {
-    $markup_string = t('(@year)', array('@year' => $object->getYear()));
+  } elseif ($object->getDate() != '') {
+    $markup_string = t('(@year)', array('@year' => $object->getDate()));
   }
   return $markup_string;
 }

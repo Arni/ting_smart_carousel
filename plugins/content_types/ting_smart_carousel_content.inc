@@ -55,7 +55,6 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
 
   if (!empty($item_id)) {
     $carousel_entity = entity_load('field_collection_item', array($item_id));
-
     $ctitle = $carousel_entity[$item_id]->field_ting_carousel_title['und'][0]['value'];
     $cquery = $carousel_entity[$item_id]->field_ting_carousel_search['und'][0]['value'];
 
@@ -65,7 +64,7 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
     $start = 0;
     $count = 18;
     $path = request_path();
-    if ($cache = cache_get($cid, 'cache_ting_smart_carousel')) {
+    if (false && $cache = cache_get($cid, 'cache_ting_smart_carousel')) {
       $items = $cache->data;
       $offset = -1;
       $log_entry = date("d-m-Y H:i") . ',Cache HIT,' . $path . ',' . $query . "\r\n";
