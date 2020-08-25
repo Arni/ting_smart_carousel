@@ -35,7 +35,7 @@ function ting_smart_carousel_menu_render($subtype, $conf, $panel_args, $context)
   $block = new stdClass();
 
   $block->title = '';
-  $block->content = $menu;
+  $block->content = theme('ting_smart_carousel_menu', array('menu' => $menu));;
 
   return $block;
 }

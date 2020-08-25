@@ -68,12 +68,12 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
       $items = $cache->data;
       $offset = -1;
       $log_entry = date("d-m-Y H:i") . ',Cache HIT,' . $path . ',' . $query . "\r\n";
-      file_put_contents('/var/www/work/log/inspirationlog.txt', $log_entry, FILE_APPEND);
+      //file_put_contents('/var/www/work/log/inspirationlog.txt', $log_entry, FILE_APPEND);
     } else {
       $items = array();
       $offset = 0;
       $log_entry = date("d-m-Y H:i") . ',Cache MISS,' . $path . ',' . $query . "\r\n";
-      file_put_contents('/var/www/work/log/inspirationlog.txt', $log_entry, FILE_APPEND);
+      //file_put_contents('/var/www/work/log/inspirationlog.txt', $log_entry, FILE_APPEND);
     }
 
 

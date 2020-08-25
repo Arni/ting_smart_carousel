@@ -32,6 +32,13 @@ function ting_smart_carousel_theme($existing, $type, $theme, $path) {
           'template' => 'ting-smart-carousel-item',
           'path' => $path . '/templates',
       ),
+      'ting_smart_carousel_menu' => array(
+          'variables' => array(
+              'menu' => NULL,
+          ),
+          'template' => 'ting-smart-carousel-menu',
+          'path' => $path . '/templates',
+      ),
   );
 }
 
