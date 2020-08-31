@@ -14,7 +14,7 @@
  *   Offset into result to fetch from.
  */
 function ting_smart_carousel_result($query, $offset) {
-  $start = 0;
+  $start = 1;
   $size = 18;
   $query = urldecode($query);
   $cid = md5('new' . $query);
