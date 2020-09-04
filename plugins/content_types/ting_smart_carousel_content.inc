@@ -1,9 +1,9 @@
 <?php
+
 /**
  * @file
  * Panels pane to display the smart search form
  */
-
 $plugin = array(
   'title' => t('Ting smart carousel content'),
   'description' => t("Display carousel"),
@@ -46,14 +46,19 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
   //$carousel_path = $context->data;
 
   $block = new stdClass();
-  $delta_id = (int)$conf['deltaid'];
+  $delta_id = (int) $conf['deltaid'];
 
   // load the field_collection and pick the delta value from $conf
   if (isset($context[0]->data->field_ting_carousel['und'][$delta_id])) {
     $item_id = $context[0]->data->field_ting_carousel['und'][$delta_id]['value'];
   }
-
-  if (!empty($item_id)) {
+  $page = 1;
+  $parameters = drupal_get_query_parameters();
+  if (isset($parameters['page'])) {
+    $page = $parameters['page'];
+  }
+file_put_contents("/var/www/drupal7vm/drupal/debug/nav1.txt", print_r($page, TRUE), FILE_APPEND);
+  if (!empty($item_id) && $page <= 1) {
     $carousel_entity = entity_load('field_collection_item', array($item_id));
     $ctitle = $carousel_entity[$item_id]->field_ting_carousel_title['und'][0]['value'];
     $cquery = $carousel_entity[$item_id]->field_ting_carousel_search['und'][0]['value'];
@@ -82,10 +87,10 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
       '#title' => $ctitle,
       '#path' => 'ting_smart_carousel/results/ajax/' . urlencode($query),
       '#items' => $items,
-      '#offset' => $offset, 
+      '#offset' => $offset,
       // Add a single placeholder to fetch more content later if there is more
       // content.
-      '#placeholders' => 1, 
+      '#placeholders' => 1,
     );
   }
   if (!empty($cquery)) {
@@ -98,9 +103,7 @@ function ting_smart_carousel_content_type_render($subtype, $conf, $panel_args, $
   }
 
   return $block;
-
 }
-
 
 /**
  * Returns an edit form for the content type.
