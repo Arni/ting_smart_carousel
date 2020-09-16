@@ -14,14 +14,6 @@ $plugin = array(
   'render last' => TRUE,
 );
 
-//function ting_smart_carousel_ting_smart_carousel_content_content_type_access() {
-//  $return = FALSE;
-//  global $user;
-//  if ($user->uid == '1') {
-//    $return = TRUE;
-//  }
-//  return $return;
-//}
 
 
 
