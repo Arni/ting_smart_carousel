@@ -22,7 +22,7 @@ function ting_smart_carousel_result($query, $offset) {
   $build = ting_object_tree_find_entities_with_covers($query, $start, $size, array ());
 
   if (isset($build)) {
-    cache_set($cid, $build, 'cache_ting_smart_carousel', REQUEST_TIME + 604800); //86400
+    cache_set($cid, $build['objects'], 'cache_ting_smart_carousel', REQUEST_TIME + 604800); //86400
   }
 
   $output = '';

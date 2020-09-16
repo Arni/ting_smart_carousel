@@ -203,7 +203,7 @@ function ting_smart_carousel_proces_results(array $objects) {
   $items = array();
   foreach ($objects as $object) {
   $cover = ting_smart_carousel_get_cover($object);
-  $creators = ting_smart_carousel_get_creators($object);
+  //$creators = ting_smart_carousel_get_creators($object);
   $items[] = theme ('ting_smart_carousel_item', array('title' => $object->getTitle(), 'creators' => $creators, 'cover' => $cover,));
   }
   return $items;
